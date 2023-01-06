@@ -7,6 +7,7 @@ import cv2
 
 import time
 
+
 class Surface(ttk.Frame):
     pic_path = ""
     viewhigh = 1000
@@ -77,7 +78,6 @@ class Surface(ttk.Frame):
             imgtk = ImageTk.PhotoImage(image=im)
         return imgtk
 
-
     def show_roi(self, r, roi, color):
         if r:
             roi = cv2.cvtColor(roi, cv2.COLOR_BGR2RGB)
@@ -95,6 +95,14 @@ class Surface(ttk.Frame):
             self.roi_ctl.configure(state='disabled')
             self.r_ctl.configure(text="")
             self.color_ctl.configure(state='disabled')
+
+
+def close_window():
+    print("destroy")
+    if surface.thread_run:
+        surface.thread_run = False
+        surface.thread.join(2.0)
+    win.destroy()
 
 
 if __name__ == '__main__':
