@@ -29,6 +29,7 @@ class Surface(ttk.Frame):
         ttk.Label(frame_left, text='原图：').pack(anchor="nw")
         ttk.Label(frame_right1, text='车牌位置：').grid(column=0, row=0, sticky=tk.W)
 
+        from_pic_ctl = ttk.Button(frame_right2, text="来自图片", width=20, command=self.from_pic)
         self.image_ctl = ttk.Label(frame_left)
         self.image_ctl.pack(anchor="nw")
 
