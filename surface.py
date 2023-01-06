@@ -1,3 +1,4 @@
+import threading
 import tkinter as tk
 from tkinter.filedialog import *
 from tkinter import ttk
@@ -96,6 +97,20 @@ class Surface(ttk.Frame):
             self.r_ctl.configure(text="")
             self.color_ctl.configure(state='disabled')
 
+
+    def from_vedio(self):
+        if self.thread_run:
+            return
+        if self.camera is None:
+            self.camera = cv2.VideoCapture(0)
+            if not self.camera.isOpened():
+                mBox.showwarning('警告', '摄像头打开失败！')
+                self.camera = None
+                return
+        self.thread = threading.Thread(target=self.vedio_thread, args=(self,))
+        self.thread.setDaemon(True)
+        self.thread.start()
+        self.thread_run = True
 
 def close_window():
     print("destroy")
