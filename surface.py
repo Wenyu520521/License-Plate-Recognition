@@ -43,58 +43,59 @@ class Surface(ttk.Frame):
         self.color_ctl = ttk.Label(frame_right1, text="", width="20")
         self.color_ctl.grid(column=0, row=4, sticky=tk.W)
 
-def from_pic(self):
-    self.thread_run = False
-    self.pic_path = askopenfilename(title="选择识别图片", filetypes=[("jpg图片", "*.jpg")])
-    if self.pic_path:
-        img_bgr = predict.imreadex(self.pic_path)
-        self.imgtk = self.get_imgtk(img_bgr)
-        self.image_ctl.configure(image=self.imgtk)
-        resize_rates = (1, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4)
-        for resize_rate in resize_rates:
-            print("resize_rate:", resize_rate)
-            r, roi, color = self.predictor.predict(img_bgr, resize_rate)
-            if r:
-                break
-        # r, roi, color = self.predictor.predict(img_bgr, 1)
-        self.show_roi(r, roi, color)
+    def from_pic(self):
+        self.thread_run = False
+        self.pic_path = askopenfilename(title="选择识别图片", filetypes=[("jpg图片", "*.jpg")])
+        if self.pic_path:
+            img_bgr = predict.imreadex(self.pic_path)
+            self.imgtk = self.get_imgtk(img_bgr)
+            self.image_ctl.configure(image=self.imgtk)
+            resize_rates = (1, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4)
+            for resize_rate in resize_rates:
+                print("resize_rate:", resize_rate)
+                r, roi, color = self.predictor.predict(img_bgr, resize_rate)
+                if r:
+                    break
+            # r, roi, color = self.predictor.predict(img_bgr, 1)
+            self.show_roi(r, roi, color)
 
-def get_imgtk(self, img_bgr):
-    img = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
-    im = Image.fromarray(img)
-    imgtk = ImageTk.PhotoImage(image=im)
-    wide = imgtk.width()
-    high = imgtk.height()
-    if wide > self.viewwide or high > self.viewhigh:
-        wide_factor = self.viewwide / wide
-        high_factor = self.viewhigh / high
-        factor = min(wide_factor, high_factor)
-        wide = int(wide * factor)
-        if wide <= 0: wide = 1
-        high = int(high * factor)
-        if high <= 0: high = 1
-        im = im.resize((wide, high), Image.ANTIALIAS)
+    def get_imgtk(self, img_bgr):
+        img = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
+        im = Image.fromarray(img)
         imgtk = ImageTk.PhotoImage(image=im)
-    return imgtk
+        wide = imgtk.width()
+        high = imgtk.height()
+        if wide > self.viewwide or high > self.viewhigh:
+            wide_factor = self.viewwide / wide
+            high_factor = self.viewhigh / high
+            factor = min(wide_factor, high_factor)
+            wide = int(wide * factor)
+            if wide <= 0: wide = 1
+            high = int(high * factor)
+            if high <= 0: high = 1
+            im = im.resize((wide, high), Image.ANTIALIAS)
+            imgtk = ImageTk.PhotoImage(image=im)
+        return imgtk
 
 
-def show_roi(self, r, roi, color):
-    if r:
-        roi = cv2.cvtColor(roi, cv2.COLOR_BGR2RGB)
-        roi = Image.fromarray(roi)
-        self.imgtk_roi = ImageTk.PhotoImage(image=roi)
-        self.roi_ctl.configure(image=self.imgtk_roi, state='enable')
-        self.r_ctl.configure(text=str(r))
-        self.update_time = time.time()
-        try:
-            c = self.color_transform[color]
-            self.color_ctl.configure(text=c[0], background=c[1], state='enable')
-        except:
+    def show_roi(self, r, roi, color):
+        if r:
+            roi = cv2.cvtColor(roi, cv2.COLOR_BGR2RGB)
+            roi = Image.fromarray(roi)
+            self.imgtk_roi = ImageTk.PhotoImage(image=roi)
+            self.roi_ctl.configure(image=self.imgtk_roi, state='enable')
+            self.r_ctl.configure(text=str(r))
+            self.update_time = time.time()
+            try:
+                c = self.color_transform[color]
+                self.color_ctl.configure(text=c[0], background=c[1], state='enable')
+            except:
+                self.color_ctl.configure(state='disabled')
+        elif self.update_time + 8 < time.time():
+            self.roi_ctl.configure(state='disabled')
+            self.r_ctl.configure(text="")
             self.color_ctl.configure(state='disabled')
-    elif self.update_time + 8 < time.time():
-        self.roi_ctl.configure(state='disabled')
-        self.r_ctl.configure(text="")
-        self.color_ctl.configure(state='disabled')
+
 
 if __name__ == '__main__':
     win = tk.Tk()
