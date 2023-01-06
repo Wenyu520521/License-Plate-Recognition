@@ -25,10 +25,11 @@ class Surface(ttk.Frame):
         self.pack(fill=tk.BOTH, expand=tk.YES, padx="5", pady="5")
         frame_left.pack(side=tk.LEFT, expand=1, fill=tk.BOTH)
         frame_right1.pack(side=tk.TOP, expand=1, fill=tk.Y)
-        frame_right2.pack(side=tk.RIGHT, expand=0)        ttk.Label(frame_left, text='原图：',font=("微软雅黑", 20)).pack(anchor="n")
-        ttk.Label(frame_right1, text='车牌位置：',font=("微软雅黑", 12)).grid(column=0, row=0, sticky=tk.W)
+        frame_right2.pack(side=tk.RIGHT, expand=0)
+        ttk.Label(frame_left, text='原图：').pack(anchor="nw")
+        ttk.Label(frame_right1, text='车牌位置：').grid(column=0, row=0, sticky=tk.W)
 
-        from_pic_ctl = ttk.Button(frame_right2, text="来自图片", width=20,command=self.from_pic)
+        from_pic_ctl = ttk.Button(frame_right2, text="来自图片", width=20, command=self.from_pic)
         self.image_ctl = ttk.Label(frame_left)
         self.image_ctl.pack(anchor="nw")
 
@@ -40,6 +41,21 @@ class Surface(ttk.Frame):
         self.color_ctl = ttk.Label(frame_right1, text="", width="20")
         self.color_ctl.grid(column=0, row=4, sticky=tk.W)
 
+def from_pic(self):
+    self.thread_run = False
+    self.pic_path = askopenfilename(title="选择识别图片", filetypes=[("jpg图片", "*.jpg")])
+    if self.pic_path:
+        img_bgr = predict.imreadex(self.pic_path)
+        self.imgtk = self.get_imgtk(img_bgr)
+        self.image_ctl.configure(image=self.imgtk)
+        resize_rates = (1, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4)
+        for resize_rate in resize_rates:
+            print("resize_rate:", resize_rate)
+            r, roi, color = self.predictor.predict(img_bgr, resize_rate)
+            if r:
+                break
+        # r, roi, color = self.predictor.predict(img_bgr, 1)
+        self.show_roi(r, roi, color)
 
 def get_imgtk(self, img_bgr):
     img = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
