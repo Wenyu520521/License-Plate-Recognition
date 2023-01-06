@@ -1,18 +1,17 @@
-import threading
 import tkinter as tk
 from tkinter.filedialog import *
 from tkinter import ttk
-
-from PIL import Image, ImageTk
+import predict
 import cv2
-
+from PIL import Image, ImageTk
+import threading
 import time
 
 
 class Surface(ttk.Frame):
     pic_path = ""
-    viewhigh = 1000
-    viewwide = 2000
+    viewhigh = 600
+    viewwide = 600
     update_time = 0
     thread = None
     thread_run = False
@@ -34,6 +33,7 @@ class Surface(ttk.Frame):
         ttk.Label(frame_right1, text='车牌位置：').grid(column=0, row=0, sticky=tk.W)
 
         from_pic_ctl = ttk.Button(frame_right2, text="来自图片", width=20, command=self.from_pic)
+        from_vedio_ctl = ttk.Button(frame_right2, text="来自摄像头", width=20, command=self.from_vedio)
         self.image_ctl = ttk.Label(frame_left)
         self.image_ctl.pack(anchor="nw")
 
@@ -44,8 +44,13 @@ class Surface(ttk.Frame):
         self.r_ctl.grid(column=0, row=3, sticky=tk.W)
         self.color_ctl = ttk.Label(frame_right1, text="", width="20")
         self.color_ctl.grid(column=0, row=4, sticky=tk.W)
+        from_vedio_ctl.pack(anchor="se", pady="5")
+        from_pic_ctl.pack(anchor="se", pady="5")
+        self.predictor = predict.CardPredictor()
+        self.predictor.train_svm()
 
-    def from_pic(self):
+
+def from_pic(self):
         self.thread_run = False
         self.pic_path = askopenfilename(title="选择识别图片", filetypes=[("jpg图片", "*.jpg")])
         if self.pic_path:
