@@ -49,23 +49,6 @@ class Surface(ttk.Frame):
         self.predictor = predict.CardPredictor()
         self.predictor.train_svm()
 
-
-def from_pic(self):
-        self.thread_run = False
-        self.pic_path = askopenfilename(title="选择识别图片", filetypes=[("jpg图片", "*.jpg")])
-        if self.pic_path:
-            img_bgr = predict.imreadex(self.pic_path)
-            self.imgtk = self.get_imgtk(img_bgr)
-            self.image_ctl.configure(image=self.imgtk)
-            resize_rates = (1, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4)
-            for resize_rate in resize_rates:
-                print("resize_rate:", resize_rate)
-                r, roi, color = self.predictor.predict(img_bgr, resize_rate)
-                if r:
-                    break
-            # r, roi, color = self.predictor.predict(img_bgr, 1)
-            self.show_roi(r, roi, color)
-
     def get_imgtk(self, img_bgr):
         img = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
         im = Image.fromarray(img)
@@ -76,6 +59,7 @@ def from_pic(self):
             wide_factor = self.viewwide / wide
             high_factor = self.viewhigh / high
             factor = min(wide_factor, high_factor)
+
             wide = int(wide * factor)
             if wide <= 0: wide = 1
             high = int(high * factor)
@@ -102,7 +86,6 @@ def from_pic(self):
             self.r_ctl.configure(text="")
             self.color_ctl.configure(state='disabled')
 
-
     def from_vedio(self):
         if self.thread_run:
             return
@@ -117,6 +100,23 @@ def from_pic(self):
         self.thread.start()
         self.thread_run = True
 
+    def from_pic(self):
+        self.thread_run = False
+        self.pic_path = askopenfilename(title="选择识别图片", filetypes=[("jpg图片", "*.jpg")])
+        if self.pic_path:
+            img_bgr = predict.imreadex(self.pic_path)
+            self.imgtk = self.get_imgtk(img_bgr)
+            self.image_ctl.configure(image=self.imgtk)
+            resize_rates = (1, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4)
+            for resize_rate in resize_rates:
+                print("resize_rate:", resize_rate)
+                r, roi, color = self.predictor.predict(img_bgr, resize_rate)
+                if r:
+                    break
+            # r, roi, color = self.predictor.predict(img_bgr, 1)
+            self.show_roi(r, roi, color)
+
+    @staticmethod
     def vedio_thread(self):
         self.thread_run = True
         predict_time = time.time()
@@ -131,8 +131,6 @@ def from_pic(self):
         print("run end")
 
 
-
-
 def close_window():
     print("destroy")
     if surface.thread_run:
@@ -145,4 +143,6 @@ if __name__ == '__main__':
     win = tk.Tk()
 
     surface = Surface(win)
+    win.protocol('WM_DELETE_WINDOW', close_window)
     win.mainloop()
+
