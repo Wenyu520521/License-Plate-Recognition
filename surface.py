@@ -2,6 +2,9 @@ import tkinter as tk
 from tkinter.filedialog import *
 from tkinter import ttk
 
+from PIL import Image, ImageTk
+import cv2
+
 class Surface(ttk.Frame):
     pic_path = ""
     viewhigh = 1000
@@ -37,6 +40,25 @@ class Surface(ttk.Frame):
         self.color_ctl = ttk.Label(frame_right1, text="", width="20")
         self.color_ctl.grid(column=0, row=4, sticky=tk.W)
 
+
+def get_imgtk(self, img_bgr):
+    img = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
+    im = Image.fromarray(img)
+    imgtk = ImageTk.PhotoImage(image=im)
+    wide = imgtk.width()
+    high = imgtk.height()
+    if wide > self.viewwide or high > self.viewhigh:
+        wide_factor = self.viewwide / wide
+        high_factor = self.viewhigh / high
+        factor = min(wide_factor, high_factor)
+
+        wide = int(wide * factor)
+        if wide <= 0: wide = 1
+        high = int(high * factor)
+        if high <= 0: high = 1
+        im = im.resize((wide, high), Image.ANTIALIAS)
+        imgtk = ImageTk.PhotoImage(image=im)
+    return imgtk
 
 if __name__ == '__main__':
     win = tk.Tk()
