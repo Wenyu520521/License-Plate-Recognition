@@ -25,11 +25,10 @@ class Surface(ttk.Frame):
         self.pack(fill=tk.BOTH, expand=tk.YES, padx="5", pady="5")
         frame_left.pack(side=tk.LEFT, expand=1, fill=tk.BOTH)
         frame_right1.pack(side=tk.TOP, expand=1, fill=tk.Y)
-        frame_right2.pack(side=tk.RIGHT, expand=0)
-        ttk.Label(frame_left, text='原图：').pack(anchor="nw")
-        ttk.Label(frame_right1, text='车牌位置：').grid(column=0, row=0, sticky=tk.W)
+        frame_right2.pack(side=tk.RIGHT, expand=0)        ttk.Label(frame_left, text='原图：',font=("微软雅黑", 20)).pack(anchor="n")
+        ttk.Label(frame_right1, text='车牌位置：',font=("微软雅黑", 12)).grid(column=0, row=0, sticky=tk.W)
 
-        from_pic_ctl = ttk.Button(frame_right2, text="来自图片", width=20, command=self.from_pic)
+        from_pic_ctl = ttk.Button(frame_right2, text="来自图片", width=20,command=self.from_pic)
         self.image_ctl = ttk.Label(frame_left)
         self.image_ctl.pack(anchor="nw")
 
@@ -59,6 +58,7 @@ def get_imgtk(self, img_bgr):
         im = im.resize((wide, high), Image.ANTIALIAS)
         imgtk = ImageTk.PhotoImage(image=im)
     return imgtk
+
 
 if __name__ == '__main__':
     win = tk.Tk()
