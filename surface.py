@@ -6,6 +6,7 @@ import cv2
 from PIL import Image, ImageTk
 import threading
 import time
+import tkinter.messagebox as mBox
 
 
 class Surface(ttk.Frame):
