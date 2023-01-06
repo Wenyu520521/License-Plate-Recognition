@@ -20,9 +20,9 @@ class Surface(ttk.Frame):
         win.title("车牌识别")
         win.state("zoomed")
         self.pack(fill=tk.BOTH, expand=tk.YES, padx="5", pady="5")
-        frame_left.pack(side=LEFT, expand=1, fill=BOTH)
-        frame_right1.pack(side=TOP, expand=1, fill=Y)
-        frame_right2.pack(side=RIGHT, expand=0)
+        frame_left.pack(side=tk.LEFT, expand=1, fill=tk.BOTH)
+        frame_right1.pack(side=tk.TOP, expand=1, fill=tk.Y)
+        frame_right2.pack(side=tk.RIGHT, expand=0)
         ttk.Label(frame_left, text='原图：').pack(anchor="nw")
         ttk.Label(frame_right1, text='车牌位置：').grid(column=0, row=0, sticky=tk.W)
 
