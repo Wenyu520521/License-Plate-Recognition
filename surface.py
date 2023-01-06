@@ -52,7 +52,6 @@ def get_imgtk(self, img_bgr):
         wide_factor = self.viewwide / wide
         high_factor = self.viewhigh / high
         factor = min(wide_factor, high_factor)
-
         wide = int(wide * factor)
         if wide <= 0: wide = 1
         high = int(high * factor)
