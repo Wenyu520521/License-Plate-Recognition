@@ -5,6 +5,8 @@ from tkinter import ttk
 from PIL import Image, ImageTk
 import cv2
 
+import time
+
 class Surface(ttk.Frame):
     pic_path = ""
     viewhigh = 1000
@@ -48,7 +50,7 @@ def from_pic(self):
         img_bgr = predict.imreadex(self.pic_path)
         self.imgtk = self.get_imgtk(img_bgr)
         self.image_ctl.configure(image=self.imgtk)
-        resize_rates = (1, 0.3, 0.8, 0.8, 0.6, 0.5, 0.4)
+        resize_rates = (1, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4)
         for resize_rate in resize_rates:
             print("resize_rate:", resize_rate)
             r, roi, color = self.predictor.predict(img_bgr, resize_rate)
@@ -75,6 +77,24 @@ def get_imgtk(self, img_bgr):
         imgtk = ImageTk.PhotoImage(image=im)
     return imgtk
 
+
+def show_roi(self, r, roi, color):
+    if r:
+        roi = cv2.cvtColor(roi, cv2.COLOR_BGR2RGB)
+        roi = Image.fromarray(roi)
+        self.imgtk_roi = ImageTk.PhotoImage(image=roi)
+        self.roi_ctl.configure(image=self.imgtk_roi, state='enable')
+        self.r_ctl.configure(text=str(r))
+        self.update_time = time.time()
+        try:
+            c = self.color_transform[color]
+            self.color_ctl.configure(text=c[0], background=c[1], state='enable')
+        except:
+            self.color_ctl.configure(state='disabled')
+    elif self.update_time + 8 < time.time():
+        self.roi_ctl.configure(state='disabled')
+        self.r_ctl.configure(text="")
+        self.color_ctl.configure(state='disabled')
 
 if __name__ == '__main__':
     win = tk.Tk()
