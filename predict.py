@@ -127,3 +127,23 @@ class StatModel(object):
 
     def save(self, fn):
         self.model.save(fn)
+
+
+class SVM(StatModel):
+    def __init__(self, C=1, gamma=0.5):
+        self.model = cv2.ml.SVM_create()
+        self.model.setGamma(gamma)
+        self.model.setC(C)
+        self.model.setKernel(cv2.ml.SVM_RBF)
+        self.model.setType(cv2.ml.SVM_C_SVC)
+
+    # 训练svm
+    def train(self, samples, responses):
+        self.model.train(samples, cv2.ml.ROW_SAMPLE, responses)
+
+    # 字符识别
+    def predict(self, samples):
+        r = self.model.predict(samples)
+        return r[1].ravel()
+
+
