@@ -1,5 +1,10 @@
+import json
+import os
+import sys
+
 import cv2
 import numpy as np
+from numpy.linalg import norm
 
 SZ = 20  # 训练图片长宽
 MAX_WIDTH = 1000  # 原始图片最大宽度
@@ -585,3 +590,8 @@ class CardPredictor:
         return predict_result, roi, card_color  # 识别到的字符、定位的车牌图像、车牌颜色
 
 
+if __name__ == '__main__':
+    c = CardPredictor()
+    c.train_svm()
+    r, roi, color = c.predict("2.jpg")
+    print(r)
