@@ -394,7 +394,7 @@ class CardPredictor:
         # 开始使用颜色定位，排除不是车牌的矩形，目前只识别蓝、绿、黄车牌
         colors = []
         for card_index, card_img in enumerate(card_imgs):
-            green = yello = blue = black = white = 0
+            green = yellow = blue = black = white = 0
             card_img_hsv = cv2.cvtColor(card_img, cv2.COLOR_BGR2HSV)
             # 有转换失败的可能，原因来自于上面矫正矩形出错
             if card_img_hsv is None:
@@ -408,7 +408,7 @@ class CardPredictor:
                     S = card_img_hsv.item(i, j, 1)
                     V = card_img_hsv.item(i, j, 2)
                     if 11 < H <= 34 and S > 34:  # 图片分辨率调整
-                        yello += 1
+                        yellow += 1
                     elif 35 < H <= 99 and S > 34:  # 图片分辨率调整
                         green += 1
                     elif 99 < H <= 124 and S > 34:  # 图片分辨率调整
@@ -421,8 +421,8 @@ class CardPredictor:
             color = "no"
 
             limit1 = limit2 = 0
-            if yello * 2 >= card_img_count:
-                color = "yello"
+            if yellow * 2 >= card_img_count:
+                color = "yellow"
                 limit1 = 11
                 limit2 = 34  # 有的图片有色偏偏绿
             elif green * 2 >= card_img_count:
@@ -437,7 +437,7 @@ class CardPredictor:
                 color = "bw"
             print(color)
             colors.append(color)
-            print(blue, green, yello, black, white, card_img_count)
+            print(blue, green, yellow, black, white, card_img_count)
             # cv2.imshow("color", card_img)
             # cv2.waitKey(0)
             if limit1 == 0:
@@ -484,11 +484,11 @@ class CardPredictor:
         roi = None
         card_color = None
         for i, color in enumerate(colors):
-            if color in ("blue", "yello", "green"):
+            if color in ("blue", "yellow", "green"):
                 card_img = card_imgs[i]
                 gray_img = cv2.cvtColor(card_img, cv2.COLOR_BGR2GRAY)
                 # 黄、绿车牌字符比背景暗、与蓝车牌刚好相反，所以黄、绿车牌需要反向
-                if color == "green" or color == "yello":
+                if color == "green" or color == "yellow":
                     gray_img = cv2.bitwise_not(gray_img)
                 ret, gray_img = cv2.threshold(gray_img, 0, 255,
                                               cv2.THRESH_BINARY + cv2.THRESH_OTSU)
@@ -524,7 +524,7 @@ class CardPredictor:
 
                 wave = max(wave_peaks, key=lambda x: x[1] - x[0])
                 max_wave_dis = wave[1] - wave[0]
-                # 判断是否是左侧车牌边缘
+                # 判牌边断是否是左侧车缘
                 if wave_peaks[0][1] - wave_peaks[0][0] < max_wave_dis / 3 and \
                         wave_peaks[0][0] == 0:
                     wave_peaks.pop(0)
@@ -565,10 +565,7 @@ class CardPredictor:
                                                    value=[0, 0, 0])
                     part_card = cv2.resize(part_card, (SZ, SZ),
                                            interpolation=cv2.INTER_AREA)
-                    # cv2.imshow("part", part_card_old)
-                    # cv2.waitKey(0)
-                    # cv2.imwrite("u.jpg", part_card)
-                    # part_card = deskew(part_card)
+
                     part_card = preprocess_hog([part_card])
                     if i == 0:
                         resp = self.modelchinese.predict(part_card)

@@ -104,7 +104,8 @@ class Surface(ttk.Frame):
 
     def from_pic(self):
         self.thread_run = False
-        self.pic_path = askopenfilename(title="选择识别图片", filetypes=[("jpg图片", "*.jpg")])
+        # self.pic_path = askopenfilename(title="选择识别图片", filetypes=[("jpg图片", "*.jpg")])
+        self.pic_path = askopenfilename(title="选择识别图片", filetypes=[("图片", "*.*")])
         # 统计时间开始
         t1 = datetime.datetime.now()
         if self.pic_path:
