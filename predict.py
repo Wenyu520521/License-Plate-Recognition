@@ -1,9 +1,5 @@
-import json
-import os
-
 import cv2
 import numpy as np
-from numpy.linalg import norm
 
 SZ = 20  # 训练图片长宽
 MAX_WIDTH = 1000  # 原始图片最大宽度
@@ -42,3 +38,11 @@ def find_waves(threshold, histogram):
     if is_peak and up_point != -1 and i - up_point > 4:
         wave_peaks.append((up_point, i))
     return wave_peaks
+
+
+# 根据找出的波峰，分隔图片，从而得到逐个字符图片
+def seperate_card(img, waves):
+    part_cards = []
+    for wave in waves:
+        part_cards.append(img[:, wave[0]:wave[1]])
+    return part_cards
