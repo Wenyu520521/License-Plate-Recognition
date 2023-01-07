@@ -119,3 +119,11 @@ provinces = [
     "zh_zang", "藏",
     "zh_zhe", "浙"
 ]
+
+
+class StatModel(object):
+    def load(self, fn):
+        self.model = self.model.load(fn)
+
+    def save(self, fn):
+        self.model.save(fn)
