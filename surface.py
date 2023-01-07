@@ -7,6 +7,7 @@ from PIL import Image, ImageTk
 import threading
 import time
 import tkinter.messagebox as mBox
+import datetime
 
 
 class Surface(ttk.Frame):
@@ -104,6 +105,8 @@ class Surface(ttk.Frame):
     def from_pic(self):
         self.thread_run = False
         self.pic_path = askopenfilename(title="选择识别图片", filetypes=[("jpg图片", "*.jpg")])
+        # 统计时间开始
+        t1 = datetime.datetime.now()
         if self.pic_path:
             img_bgr = predict.imreadex(self.pic_path)
             self.imgtk = self.get_imgtk(img_bgr)
@@ -116,6 +119,10 @@ class Surface(ttk.Frame):
                     break
             # r, roi, color = self.predictor.predict(img_bgr, 1)
             self.show_roi(r, roi, color)
+            # 统计时间结束
+            t2 = datetime.datetime.now()
+            t = t2 - t1
+            print("程序处理图片的时间" + str(t))
 
     @staticmethod
     def vedio_thread(self):
@@ -143,7 +150,10 @@ def close_window():
 if __name__ == '__main__':
     win = tk.Tk()
 
+
     surface = Surface(win)
+
+
     win.protocol('WM_DELETE_WINDOW', close_window)
     win.mainloop()
 
